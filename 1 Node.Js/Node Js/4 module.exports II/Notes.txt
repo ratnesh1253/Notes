@@ -1,0 +1,17 @@
+to transfer data from one directory to another
+
+first create a index.js & transfer all data to it
+
+*file name always must be index.js
+
+then store it in collection
+
+then export all at once.
+
+
+in another folder require this export where you want 
+use folder name in require function
+require("foldername");
+
+*when we try to require info from another folder 
+it first serach index.js in that folder

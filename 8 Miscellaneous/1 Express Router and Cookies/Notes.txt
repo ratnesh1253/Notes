@@ -1,0 +1,139 @@
+Express Router =>
+
+it is a way to organise express application such that
+our primary app.js file does not become bloated.
+
+structure code in easy and more understandle form
+
+we'll create a varible 'router' which will create a new router object.
+for that we express have Router() method
+
+const router = express.Router();
+
+express object has Router() method that creates new router object
+
+when we are working on big project
+app.js file becomes larger.
+so it is not easily understandable
+
+then express.Router() will help us to restrycture this code
+
+-----------------------------------------------------------------------------
+
+create a js file -> server.js to create express app
+
+we'll create a new folder 'routes'
+
+our server.js file has users related and posts related routes.
+
+so wi'll create seperate files for users and post related routes in 'routes' folder.
+
+and create router object in each file.
+
+* replace all app.get, app.post, app.delete, app.put, etc
+router.get, router.post, router.delete, router.put, etc
+
+* at the end export router object.
+
+--------------------------------------------------------------------------------------------
+
+to make it working
+we need to map all req related to user to match with user related routes and same for posts.
+
+use app.use() for this.
+
+first take common part in all user routes and map it all user related req
+
+app.use("/users", user); -> all routes starting with "/users" will match with routes in users.js file routes
+
+same for posts
+
+and also
+* remove that common part in reqs from user.js and posts.js files  
+
+==========================================================================================================================
+==========================================================================================================================
+==========================================================================================================================
+
+Cookies =>
+
+Http cookies are samll blocks of data 
+created by web server
+while a user is browsing a web site
+and placed on user's device
+by user's web browser.
+
+cookies are used for ->
+
+- session management
+- personalization
+- tracking(frequent website)
+
+it remembers what routes we have visited before
+
+we'll focus on personalization ->
+
+=====================================================
+
+Sending Cookies =>
+
+Express has ability to send cookies
+
+to send cookies from server ->
+we have a function in res -> 'res.coockie()'
+in this function we can send name-value pair in it.
+ex.
+res.cookie("greet", "hello");
+name-value pair => greet - hello
+
+go on this route
+see in browser->inspect->application
+
+event after we go on another route after this route
+this coockie will be saved on browser
+
+=====================================================
+
+Cookie Parser => access coockie and read it
+
+cookie are alway the part of 'req' 
+we can print it -> console.dir(req.cookies);
+
+but we can not access cookies directly
+for that we use a middleware 'cookie-parser'
+
+it is a basically npm package
+
+require coockie-parser
+create middleware -> app.use(cookieParser);
+
+now we can access coockies directly
+
+=====================================================
+
+Signed Cookies =>
+
+we always send Signed cookie
+and verify received cookie is Signed
+
+cookies have signed property indicating that cookie is signed or not
+
+while sending cookie if we make signed property true then it is signed
+ex.
+res.cookie("color", "red", { signed: true });
+
+to make it signed we have to send a string to cookieParser
+ex.
+app.use(cookieParser("secretCode"));
+
+it encode cookie value based on that secretCode.
+
+resone behind is that we can see if someone make changes to the value
+
+if we try to print signed coockie it will not print
+
+to access signed cookies ->
+
+console.log(req.signedCookies);
+
+if someone make changes to signed cookie value then it will show null object or 'false' as a value

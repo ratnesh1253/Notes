@@ -1,0 +1,17 @@
+Process ->
+it is the object information about, and control over, the current Node.js Process
+
+give info about current running Process in Node.js
+it can be used to make changes and manipulation in process
+
+it has so many methods
+that allow us to take input and give output and access memory related info
+
+
+process.cwd() -> give info about current working directory
+
+process.argv -> return array containing the command-line argument passed when the Node.js process was launched
+
+i.e while running script file some arguments are passed, then an array with this arguments will return
+
+ex. node script.js ratnesh suresh -> here ratnesh and suresh are arguments

@@ -1,0 +1,178 @@
+EJS => Embedded JavaScript
+it is a simple templating language that lets you to generate HTML markup with plain JavaScript
+
+Templating => (blueprint)
+
+templating is creating a sturcher or fixed layout of HTML for similar serches
+ex. instagram profile page -> layout is same for every profile only info changes
+
+--------------------
+install EJS -> npm i EJS
+create index.js
+----------------------
+
+in index.js
+require express and express will automatically require EJS.
+
+to use EJS =>
+
+app.set("view engine", "ejs");
+-> it set view engine for ejs -> view engine = used to template rending 
+
+
+*when we use view engine we have to create a folder named "views"
+*all our views template(ejs templates) will be stored in this folder
+
+*by default express search for this folder
+
+--------------------------
+to create template =>
+
+use extention ".ejs"
+ex. home.ejs
+
+-it store HTML and CSS mix code
+-----------------------------------------------------------------------------------
+
+in app.get() -> we use  to send responce
+res.render(responce file) -> here responce means file that used to render HTML 
+ex. res.render("home.ejs");
+
+---------------------------------------------------------------------------------------------
+
+view Directory =>
+
+to set path for views folder. 
+so express know where it can get views folder
+even if we run server from anywhere
+
+step 1 -> require path package -> const path = require("path");
+step 2 -> set path -> app.set("views", path.join(__dirname, "/views"));
+
+__dirname is current Directory of index.js
+
+--------------------------------------------------------------------------------
+< install EJS Language Support extension for vs code >
+Interpolation Syntax =>
+
+embedding expressions to marked up text
+
+we can embedd JS in html to make it dynamic
+EJS has some tags for it
+
+* <%=  -> embedd Output value into the html template (final value will be in string)
+i.e. final output of JS is converted to string
+
+* <%   -> scriptlet tag -> no output -> used for loops, if-else
+write js code b/t those tags
+*see conditional statement and loop for this use -->
+
+* <%-  -> same as <%= -> but output HTML into template without converting it to string
+
+--------------------------------------------------------------------------------------
+
+Passing data to EJS =>
+
+we have data comming from database
+now we want it to add in EJS file.
+
+*so we will add a object in argument to app.render method
+
+this object will store key-value pair
+
+data from database will store as value in object
+
+and the key will accessed in EJS file
+
+ex.   
+let diceValue = 3; //from database
+res.render("rollDice.ejs", { num: diveValue });
+
+or 
+
+we can only pass value in object
+ex.   
+let diceValue = 3; //from database
+res.render("rollDice.ejs", { diveValue });
+
+----------------------------------------------------------------------
+
+Conditional statements in EJS =>
+
+
+write if and else statement line in <% %> tag
+
+and html code without tag
+
+<% if (num==6) { %>
+
+    <h2>Nice! Roll Again</h2>
+
+<% } %>
+
+----------------------------------------------------------------------
+
+loops in EJS =>
+
+write if and else statement line in <% %> tag
+
+and html code without tag
+
+<ul>
+    <% for(let name of followers) { %>
+        <li>
+            <%= name %>
+        </li>
+    <% } %>
+</ul>
+
+--------------------------------------------------
+passing whole data to EJS =>
+
+instead of passing data one by one in variables
+we can send whole file to it
+
+step 1. require("./data.json) -> require file in an variable
+step 2. send that variable as object in render method
+
+-----------------------------------------------------------------
+
+Serving Static Files => static files = html, css and Js
+
+
+till now we have rendered only HTML file
+
+but sometimes we have to send HTML along with css and JS
+
+=>by default all static files are stored  in "public" folder
+*express by default serches for public
+
+this how we set path in index.js for static files ->
+
+app.use(express.static(path.join(__dirname, "public")));
+
+if public has multiple folder and we want to serv multiple folders
+then we can give path multiple times for all required folders
+
+----------------------------------------------------------------------------
+
+Includes =>
+
+used to insert sub-templates
+
+sub part of html that we want to insert in many html file
+
+create a folder in views for it
+and store sub-template in that folders 
+
+for ex. includes folder
+
+include small part of html  template in another template
+
+in destination file means where you want to add subtemplate
+
+<%- include("includes/head.ejs"); %>
+
+includes/head.ejs => head.ejs sub template is present in include folders
+
+for this check instagram.ejs

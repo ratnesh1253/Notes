@@ -1,0 +1,130 @@
+Middlewares -> 
+
+it is an intermediary task between request and responce
+
+* it work after server receives request and before responce is send to client
+
+request ---> Middlewares ---> Response
+
+common middleware functions ->
+- method override for put delete patch request in html
+- bodyParser
+- express.static files -> app.use(express.static(path.join(__dirname, "/public")));
+- express.urlencoded -> app.use(express.urlencoded({extended:true}));
+
+middleware can access req, res objects
+chain of calling middlewares is possible
+middleware can send res to stop chaining
+
+============================================================================================
+
+* it perform following tasks ->
+- Execute any code
+- make changes to the request & the responce object (add new things to it)
+- End the request-responce cycle
+- Call the next Middlewares in the stack
+
+defining Middlewares =>
+
+app.use(path, callback);
+
+ex. 
+app.use(() => {
+    console.log("this is a middleware");
+})
+
+app.use("/random", (req, res) => {
+    console.log("this is a middleware");
+})
+
+*if we specify path in app.use() then it will only work for that path
+*if not specify path in app.use() then it will work for all request
+* middleware can only send Response or call next middleware or function
+
+==================================================================================
+
+Middlewares are written at starting of code
+
+===================================================================
+
+Using next =>
+
+next middleware function is denoted by variable named "next"
+
+next is passed as parameter in middleware
+
+app.use( (req, res, next) => {
+    next();
+});
+
+if current middleware does not end req-res cycle,
+it must call next() to pass control to next middleware.
+
+next() => it run and give controll to next middleware matching with path
+
+types of middleware ->
+1. application level middleware
+2. router level middleware
+3. error handling middleware -> err parameter is passed -> app.use((err, req, res, next) => {});
+4. Built-in middleware -> already exist in express -> express.static
+
+===============================================================================
+
+utility middleware =>
+
+logger -> log (print) usefull info in console
+info such as -> method( GET, POST, etc), time, hostname
+
+ex.
+app.use((req, res, next) => {
+  req.time = new Date(Date.now()).toString().slice(0, 34);
+  console.log(req.method, req.hostname, req.path, req.time);
+  next();
+});
+
+====================================================================
+
+app.use() =>
+
+middleware work as callbacks in app.use()
+
+callbacks can be ->
+- a middleware function
+- a comma seperated series of middleware function
+- array of middleware
+- combination of above
+
+*if we provide path with middleware then it will only work for that req
+
+=================================================================================
+
+multiple middleware =>
+
+passing multiple middlewares
+
+const check = (req, res, next) => {
+  let { token } = req.query;
+  if (token === "giveaccess") {
+    next();
+  } else {
+    res.send("Access Denide!");
+  }
+};
+
+app.get("/api", check, (req, res) => {
+  console.log("data sent!");
+  res.send("data");
+});
+
+here in above example
+
+we are passing a check function as a middleware
+it chack access token if it is valid then only it call next() middleware and data sent
+
+===============================================================================================
+
+Error handling =>
+
+express default error handling
+
+express embedd some default error handlers in our code

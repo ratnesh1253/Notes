@@ -1,0 +1,68 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Logs
+logs
+*.log
+npm-debug.log
+yarn-debug.log
+pnpm-debug.log
+lerna-debug.log
+.log
+
+# Build artifacts
+dist/
+build/
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.test
+.env.production
+.env.development
+.env.local
+.env.*.local
+
+# Editor & System files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Coverage directories
+coverage/
+
+# Temp files
+tmp/
+*.tmp
+*.bak
+
+# Testing
+.nyc_output/
+jest.cache/
+jest-stare/
+jest-html-reporters-*.html
+
+# TypeScript
+*.tsbuildinfo
+
+# Optional - If you have Docker setups in some apps
+docker-compose.override.yml
+docker-compose.override.yaml
+.dockerignore
+
+# Ignore OS-specific junk files
+*.bak
+*.swp
+*.swo
+~$*

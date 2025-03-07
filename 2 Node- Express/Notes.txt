@@ -1,0 +1,121 @@
+Express => framework
+
+-server side programming
+
+1. listen incoming request
+2. parse data
+3. match responce with routes
+4. send responce
+
+install express package -> npm install express
+created index.js
+
+in index.js =>
+
+const express = require("express");
+const app = express();
+
+this "app" is object and will help to create a server
+
+-----------------------------------------------------------------------------------------------------------------
+
+1. to listen incoming request =>
+
+.listen method
+
+app.listen(port, callback());
+
+listen request
+
+ports -> are logical end points of a network connection that is used to exchange info b/t web server and web client
+ex. let port = 3000;
+
+*this function continuosly listen for request
+to stop press Ctrl+c
+
+-------------------------------------------------------------------------------------------------------
+
+2. respond =>
+
+.use method
+
+app.use(callback(req, res));
+
+accepts all type of request and responds to them
+
+when get request callback runns
+
+-----------------------------------------------------------------------------------------------------
+
+sending a responce form our server =>
+
+to send responce first see
+1. req object    2. res object
+
+the http req we are getting from browser is text based
+express parse that req in object
+
+to send res we use res object
+in responce we can send string , object , array and anything
+*by default express send responce with JSON responce.
+
+to send responce we use app.use callback()
+and
+res.send(responce) method
+we can send anything as a responce -> string, num, object , etc
+
+------------------------------------------------------------------------------------------------------------
+
+3. routing =>(listen perticular req and responce)
+
+it is process of selecting path for traffic in a network or b/t or across multiple network.
+
+*for different routs we send different responces
+
+*get request =>
+
+1. app.get(path, callback) => if any route gets get request then send that route respond
+
+path -> define path, on which route request is comming
+("/" is default path)
+
+callback -> what will execute when request arive
+we use res.send(responce) method in callback
+
+*we can send only one responce at a time for one path
+
+we can send responce on those request whose routes are present
+
+if we add "*" in path -> means all path.
+for all request that routs are not available it will respond.
+
+.post request =>
+
+app.post()
+
+--------------------------------------------------------------------------------------------------------------
+
+Nodemon => package to automatically restart server  with code changes
+
+to start -> nodemon index.js
+to restart -> rs
+
+----------------------------------------------------------------------------------------------------------
+
+path parameters => with our path we can send some variable value.
+
+in path everything after ":" is parameter
+ex. "/:username" -> here username is parameter in path. whos info is alredy stored in req
+
+req.params = store all parameters that come with request
+
+
+-------------------------------------------------------------------------------------------------------
+
+Query String =>
+
+req.query = it store all the query that come with request
+
+ex. in req anything after "q=" is query
+
+"localhost:3000/search?q=mango" -> mango is query

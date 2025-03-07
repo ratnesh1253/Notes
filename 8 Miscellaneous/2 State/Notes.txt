@@ -1,0 +1,148 @@
+State => all information related to request.
+
+when client interact with server
+this one transaction is called as session.
+
+the rules that are followed by request and responce are called Protocols
+
+there are two protocols =>
+1. stateful protocol
+it requires server to save status and session information
+ex. file transfer protocol, UPI
+
+2. stateless protocol
+it does not require server to save status and session information
+ex. http, Physical Cash
+
+================================================================================
+
+Express Sessios =>
+
+an attemp to make our session(http) stateful.
+an attemp to save some session information to server side
+
+store sessio information of user in sessioId at temperary storage in server.
+send this this information to client in form of cookies.
+
+-------------------------------------------------------------------------------------
+
+Express Sessios -> creates a session middleware 
+
+install the package -> npm i express-session
+
+require in server.js
+
+create a middleware
+
+this middleware has some options in it
+
+Required - 
+this is secret used to sign sessionId cookie
+this can be string for single secret or a array of multiple secret.
+secret is random set of charactor and it is timely updated
+
+resave -
+sessions are saved to session store even if it is not changed during request
+default value is true
+
+saveUninitialized -
+it force a session which is saveUninitialized to be saved in store
+
+all these three options are added to middleware
+app.use(session({ secret: "supersecretstring", resave: false, saveUninitialized: true }))
+
+================================================================================
+
+Storing and using session info =>
+
+we can save anythin in req.session object
+
+ex. saving name in object ->
+
+app.get("/register", (req, res) => {
+    let { name = "Sam" } = req.query;
+    req.session.name = name;
+    console.log(req.session.name);
+});
+
+*we can access this from any other function or callback or routes.
+
+here we are setting value of name in "/register" route and getting that value in "/hello" routes
+
+================================================================================
+
+using connect-flash =>
+
+special area of messages used for storing messages.
+messages are written to flash and cleared after being displayed.
+
+messages that appears(popup) single time and and dont appear for page refresh
+
+it appears for crud operations and error in webpage
+
+----------------------------------------------------------------
+
+basically a middleware
+
+used in combinations with redirects
+this messages are used when we redirecting and rendering to different routes
+
+first messages are stored in sessions
+then enable cookieParser and session middleware
+then use flash middleware 
+
+----------------------------------------------------------------
+
+install connect-flash ->
+
+npm i connect-flash
+
+require it in server.js -> const flash = require("connect-flash");
+
+create middleware -> app.use(flash());
+
+----------------------------------------------------------------
+
+to flash message =>
+
+req.flash("key", "message");
+
+it has two parameters -
+
+key - string to identify message
+message - message
+
+to render mession on page 
+we have to use views.
+
+ex. we are redirecting "/register" to "/hello" route
+
+in "/register" ->
+create req.flash(key, message);
+
+in "/hello" ->
+render a ejs file.
+in ejs file pass that message using key -> msg: req.flash("success")
+ex.
+res.render("page.ejs", { name: req.session.name, msg: req.flash("success") });
+
+now it will show message for first time and will not displayed after refresh.
+
+--------------------------------------------------------------------------------------
+
+using res.local => better way to use flash message.
+
+use this property to set variables accessible in templates and render with res.render()
+
+if we want to access any variable in res.render the store this varible in res.local
+
+so we save message in res.locals.message in "/hello" route
+
+then we can access res.locals.message any where
+
+for this we have created a middleware
+app.use((req, res, next) => {
+    res.locals.successMsg = req.flash("success");
+    res.locals.errorMsg = req.flash("error");
+    next();
+});

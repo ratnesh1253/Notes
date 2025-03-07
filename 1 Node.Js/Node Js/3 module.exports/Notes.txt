@@ -1,0 +1,21 @@
+module.exports -> a object
+
+it gives other files info about the file it is written in
+
+i.e special object that send file data to another file.
+
+-by default it send a object but explicitely we can chege ints valye to num and string
+
+require() -> a function that includes external module that exist in another files 
+
+i.e it is written in another file where we want to access other files data
+
+ex.
+const variable = require("./filename");
+
+filename is file where module.exports is written
+./ is path means same folder
+
+here we are passing info from math.js to script.js
+
+we can create multiple module.exports in same file

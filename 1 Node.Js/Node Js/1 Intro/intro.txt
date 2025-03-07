@@ -1,0 +1,17 @@
+Node.js
+
+it is JavaScript runtime environment
+
+used for server side programming
+
+in node.js Javascript can run without browser
+
+to go in node environment from terminal
+-write "node" in terminal
+
+*be in same folder to run its file
+
+to run file ->
+node filename.js
+
+ex. node script.js

@@ -1,0 +1,236 @@
+Define our custom error handlers =>
+
+how to create error handling middleware -> 
+
+define error handling middleware same way as other middleware
+* it has 4 arguments  (err, req, res, next)
+
+* when we call next() in error handling middleware
+next() will search for non error handling middleware
+so we pass err in next() -> next(err) so it trigger express default error handlers
+
+next() => calling next normal middleware
+next(err) => calling next error handling middleware
+
+=============================================================================================
+
+HTTP response status codes indicate whether a specific HTTP request has been successfully completed. Responses are grouped in five classes:
+
+Informational responses (100 – 199)
+
+Successful responses (200 – 299)
+
+Redirection messages (300 – 399)
+
+Client error responses (400 – 499)
+400 -> Bad request -> server cannot or will not process the request
+403 -> forbidden -> The client does not have access rights to the content
+404 -> Not found -> The server cannot find the requested resource.
+
+Server error responses (500 – 599)
+500 -> Internal Server Error -> The server has encountered a situation it does not know how to handle.
+502 -> Bad Gateway -> server got an invalid response.
+503 -> Service Unavailable -> The server is not ready to handle the request. Common causes are a server that is down for maintenance or that is overloaded. 
+504 -> Gateway Timeout -> cannot get a response in time.
+
+====================================================================================================================
+
+Throwing custom error =>
+
+creating a file -> ExpressError.js
+
+crating a class that extends Error class of JS -> 
+
+class ExpressError extends Error {
+  constructor(status, message) {
+    super();
+    this.status = status;
+    this.message = message;
+  }
+}
+
+export this class and require in app.js
+
+then define middleware to Throw custom error ->
+
+const check = (req, res, next) => {
+  let { token } = req.query;
+  if (token === "giveaccess") {
+    next();
+  }
+  throw new ExpressError(401, "ACCESS DENIED!");
+};
+
+then define custom error to show ->
+
+app.use((err, req, res, next) => {
+  let { status, message } = err;
+  res.status(status).send(message);
+});
+
+when this error triggers it will show -> ACCESS DENIED!
+
+-------------------------------------------------------
+
+above we are extracting status and message info from err -> let { status, message } = err;
+but their can be situation where we cant get this info because outof range err(out of 400 - 599)
+then it will show undefined
+
+to avoid this 
+if such situation occurs
+to overcome this
+we will set it to 500
+
+let { status = 500, message } = err;
+
+and it will show Internal server error for such cases
+
+such a way we can also set default value for message ->
+
+let { status = 500, message = "some error occured" } = err;
+
+==========================================================================
+
+Handling Async Errors =>
+
+generally working with mongoDB
+
+in this code error is -> id not found in DB
+
+process of handling those error is different than normal Errors
+
+we will create a custom error class same as above -> ExpressError
+
+create middleware to handle error same as above
+
+app.use((err, req, res, next) => {
+  let { status = 500, message = "Some Error Occured" } = err;
+  res.status(status).send(message);
+});
+
+-------------
+
+so in case of Async error 
+it does not call next by default
+we have to call next explicitly
+and pass error in next ->
+
+app.get("/chats", async (req, res, next) => {
+  let id = "66a540f82150a7e3d17ba18f";
+  let chat = await Chat.findById(id);
+  if (!chat) {
+    next(new ExpressError(404, "Chat not Found"));
+  }
+  res.send(chat);
+});
+
+==================================================================
+
+Validation Error => for async error
+
+error occured when set of rules defined break -> schema validation error
+such as name must be string 
+
+here we use Try and catch block
+
+we can run code in try block
+catch error in catch block
+pass error in next
+
+ex.
+
+try{
+  //code to be run
+} catch (err) {
+  next(err);
+}
+
+we can use try and catch for all async functions
+
+it helps in case any error occurs catch will catch it and error handlers will called
+
+========================================================================================
+
+WrapAsync => better form of try and catch
+
+we will create function wrapAsync which return a "x" function and also we pass a "y" function as argument
+
+the "x" function it is returning has parameters (req, res, next)
+
+"x" function executes "y" function which we have passed as argument
+and pass (req, res, next) to "y" function with catch(err)
+
+ex.
+function asyncWrap(fn) {
+  return function (req, res, next) {
+    fn(req, res, next).catch((err) => next(err));
+  };
+}
+
+this is like ->
+
+conat hello = () => {
+  console.log("hello");
+}
+
+function asyncWrap(hello);
+
+=>> hello
+
+anything that we want to do async will be passed as argument 
+this function will execute this with catch(err)
+
+this reduce reuse of try and catch for every middleware
+
+//AsyncWrap function
+function asyncWrap(fn) {
+  return function (req, res, next) {
+    fn(req, res, next).catch((err) => next(err));
+  };
+}
+
+//new show route for DB for async error
+app.get(
+  "/chats",
+  asyncWrap(async (req, res, next) => {
+    let id = "88a540f82150a7e3d17ba18f"; //this is incorrect id
+    let chat = await Chat.findById(id);
+    if (!chat) {
+      next(new ExpressError(404, "Chat not Found")); // callnext with error as argument
+    }
+    res.send(chat);
+  })
+);
+
+==================================================================================================
+
+Mongoose Errors =>
+
+there are different types of errors in mongoose such as
+validation errors
+cast errors
+
+every error has its name which tells us what type of error is this
+
+to print name this error we wil create another error handling middleware
+
+ex.
+//error handling middleware to print name of error
+app.use((err, req, res, next) => {
+  console.log(err.name);
+  next(err);
+});
+
+if we want to create error handlers for specific error that trigger when thoes error occured
+ex.
+app.use((err, req, res, next) => {
+  console.log(err.name);
+  if (err.name === "ValidationError") {
+    console.log("this was a validation error. please follow rules!");
+  } else if (err.name === "Error") {
+    console.log("your id is not available in database, please check it!");
+    console.dir(err.message);
+  }
+  next(err);
+});
+

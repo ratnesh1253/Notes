@@ -1,0 +1,51 @@
+NPM => Node pakage Manager
+
+-like library of pakage -> pakages are codes that are already written by developers
+-command line tool
+
+*to install pakages
+-> npm install <-pakagename->
+or
+-> npm i <-pakagename->
+
+-----------------------------------------------------------------------------------------
+
+node_modules -> this folder contain all installed dependency for your project
+*dont delete or make changes to this folder
+
+-------------------------------------------------------------------------------------------
+
+package_lock.json -> it record the exact version of every installed dependency,
+including its sub-dependency and their version
+
+----------------------------------------------------------------------------------------------
+
+to use this pakage ->
+we'll create a file in same directory of that pakage
+with name -> index.js
+and require() that pakage in index.html
+* to require pakages we dont need to use "./" in function 
+
+access pakage here write code useing it and run this index.js
+
+---------------------------------------------------------------------------------------------------
+
+pakage.json =>
+this file contain descriptive and functional metadata(data about data) about a project, such as name, version and dependencies.
+
+*all project should have pakage.json
+
+*if by mistake we delete node_modules
+then using pakage.json we can re doownload it
+command -> npn install in terminal
+
+-----------------------------------------------------------------------------------------------------
+
+to create pakage.json for our project
+command -> npm init
+
+*run this command where you want to create pakage.json 
+
+after that it will ask name, version, description, entry point and many more
+
+as we add more pakages to our project more dependencies will add in pakage.json

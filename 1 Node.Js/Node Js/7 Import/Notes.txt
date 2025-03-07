@@ -1,0 +1,31 @@
+require v/s import
+
+require -> we can not load selectie pieces that we need
+but
+
+import -> we can selectively load only the pieces we need, which save memory
+
+*we either use import or require.
+never use both together in project
+
+to export ->
+we use "export " keyword before the variable we want to export
+
+to import ->
+
+syntax:
+
+import {variable1, variable2, ...} from "fileName.extension";
+
+*to use this create pakage.json in parent folder
+*and add "type": "module" key-value pair
+
+---------------------------------------------------
+require load everything in sequence of written in file 
+
+import load only selected things
+
+--------------------------------------------------------
+
+we can import pakages also
+

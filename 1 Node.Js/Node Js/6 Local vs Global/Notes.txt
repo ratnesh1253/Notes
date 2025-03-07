@@ -1,0 +1,16 @@
+Local v/s Global =>
+
+*in local installation we cannot access pakages outside their folder
+ex. we cannot use figlet outside its folder
+
+for that we need to install it Global
+
+to install globally
+
+* we need to add flag -g in install command
+
+npm install -g <-pakageName->
+
+after installation we need to link that pakage
+
+command -> npm link <-pakageName->

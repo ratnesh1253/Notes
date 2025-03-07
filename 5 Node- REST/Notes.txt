@@ -1,0 +1,123 @@
+REST => (Not a package or technology) (it is rules)
+
+Representational State Transfer
+
+REST is an architectural style that defines a set of constraints to be used for creating web services.
+
+it is set of rules to create web services.
+
+RESTful API => APIs that applies REST rules.
+
+* used perform CRUD operations
+
+CRUD =>
+
+GET -> retrives resourses(read resources)
+POST -> submit new data to the server 
+PUT -> update existing data
+PATCH -> update existing data partially (only selective elements to update)
+DELETE -> remove data
+
+-------------------------------------------------------------------------------
+
+Creating RESTful APIs =>
+
+GET    ->   /posts         - to get data for all posts (to view)
+GET    ->   /posts/:id     - to get one individual post(using id)
+
+POST   ->   /posts         - to add a new post
+
+PATCH  ->   /posts/:id     - to update specific post
+
+DELETE ->   /posts/:id     - to delete specific post
+
+-----------------------------------------------------------------
+
+views folder for ejs files
+public folder for CSS
+
+-----------------------------------------------
+
+1. Creating /posts INDEX route to accept GET request
+-> to get data of all posts
+
+-----------------------------------------------
+
+2. Creating /posts/new route to Add a new post using POST request
+-> take info of post
+-> add to arr
+-> redirect to /posts route
+
+------------------------------------------------
+
+****************************************************************************************************
+res.send -> text, html, object data can be sent
+res.render -> render ejs files
+res.redirect -> we can redirect to another url and responce from that url is final responce
+*****************************************************************************************************
+
+--------------------------------------------------------------------------------------------------------------
+
+3. Creating /posts/:id -> to get one post(using id)
+
+-> take id from url
+-> search in arr
+-> show info
+
+--------------------------------------------------------------
+********************************************************
+Creating a uniqu id
+
+UUID package -> Universally Unique Package
+
+it is package in express
+
+install -> npm i UUID
+require -> const { v4: uuidv4 } = require("uuid");
+function to generate id -> uuidv4();
+*********************************************************
+
+------------------------------------------------------------------------
+
+4. Creating /posts/:id -> to update specific post using PATCH req
+
+-> fill edit.ejs from
+-> get content from form
+-> take id from url
+-> search in arr
+-> add new content in old content
+-> redirect to new page
+
+*************************************
+
+HTML form only send GET and POST req
+
+to edit info we need PATCH req.
+to get PATCH req from form 
+we'll override form POST req
+
+gor that insall method-override package
+-> npm i method-override
+
+require it in index.js
+-> const methodOverride = require("method-override"); //to overide html form method to patch
+
+use it
+-> app.use(methodOverride("_method"));
+
+in HTML form add action 
+->  method="post" action="/posts/<%= post.id %>?_method=PATCH"
+
+here POST req willbe override as PATCH req
+
+you can add any operation name instead PATCH which you want in req from form
+
+********************************************************************************
+
+--------------------------------------------------------------
+
+5. to DELETE post using /posts/:id route
+
+-> POST req converted to DELETE
+-> arr is filtered fot that id
+-> post is removed from that arr

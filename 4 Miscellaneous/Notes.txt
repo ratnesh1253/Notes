@@ -1,0 +1,55 @@
+1. Get & Post Request =>
+
+GET => 
+- used to GET some responce
+
+- Additional Data sent in query strings
+(limited, string data & visible in URL)
+
+i.e when user enter info in form all info is visible in url
+
+*when you want some responce in return use GET
+ex. google search
+
+POST =>
+- Used to POST something (for create / write / update)
+i.e to send something on backends
+
+- Data sent via request body(any type of data)
+i.e when user enter info in form all info is not visible in url
+
+*when you dont want responce in back use Post
+ex. google drive file upload
+
+-------------------------------------------------
+
+we can get data form get request by =>
+  let { user, password } = req.query;
+
+------------------------------------------------
+
+to get data from Post request =>
+
+step 1. set up request route to get some responce
+ex. app.post("route", callback());
+
+step 2. Parse Post data
+
+in post request -> all data come in req body.
+to access data from request body 
+1. parse data 
+2. access it
+
+* if data is in URL encoded format->
+
+    app.use(express.urlencoded({extended: true}));
+
+    -> it run for all request if it is get, post, put, etc.
+    -> it decodes all oncoming data
+
+* if data is in json format ->
+
+    app.use(express.json());
+
+    -> it run for all request if it is get, post, put, etc.
+    -> it decodes all oncoming json data

@@ -1,0 +1,366 @@
+Authentication => SignUp And LogIn
+Authentication is the process of verifying who someone is
+
+Autherization =>
+Autherization is the process of verifying what specific application, files, and data a user has to access
+
+========================================================================
+
+Storing Passwords =>
+
+while SignUp/LogIn we take inputs from user
+1. email
+2. username
+3. password
+
+email and username are stored in database as it is
+* but Passwords are not stored as it is.
+* we store their hashed from
+
+we create a hashing function to generate hashed form of Passwords
+
+hashing function always create same hash form for same input
+
+========================================================================
+
+hashing function =>
+
+for every input, there is fixed length output.
+
+they are one way functions, we cant get input from output.
+
+for different input, there is a different output of same length.
+
+small changes in input should breing large changes in output.
+
+========================================================================
+
+Salting =>
+
+password salting is a technique to protect passwords stored in database 
+by adding a string of 32 or more charactores and then hashing them
+
+ex.
+salt = "%?@"
+password = 'userpassword' -> 'userpassword%?@' -> hashed format
+
+========================================================================
+
+node.js has may built in tools for SignUp and LogIn
+which automatically does salting ahd hashing
+
+most popular tool for node.js in industry is Passports.
+
+========================================================================
+
+Passport => Passportjs.org
+
+it is a library helps in Authentication
+express compatible Authentication middleware for node.js
+
+using it 
+we can SignUp with username and password and aslo using other platforms like google, facebook, apple
+
+there are multiple strategies that provide SignUp/LogIn using other platforms
+
+we'll use Passport-local strategy
+
+========================================================================
+
+install->
+
+npm i passport -> express compatible Authentication middleware for node.js
+
+npm i passport-local -> passport strategy for Authentication using username and password
+
+npm i passport-local-mongoose -> mongoose related library which works better with passport
+
+========================================================================
+
+Creating User model
+
+
+Authentication and Autherization =>
+
+for SignUp And LogIn we use passport library
+refer backend -> miscellanious -> Authentication
+
+install->
+
+npm i passport -> express compatible Authentication middleware for node.js
+
+npm i passport-local -> passport strategy for Authentication using username and password
+
+npm i passport-local-mongoose -> mongoose related library which works better with passport
+
+------------------------------------------------------------------------
+
+Creating user model ->
+
+user model will have -> username, email, password.
+
+while defining user schema in mongoose
+we need to plugin passport-local-mongoose in user schema.
+
+create user model in 'user.js' in 'models' folder.
+require 'mongoose' and 'passport-local-mongoose'
+
+define user schema.
+
+** passport-local-mongoose will add a username, hash and salt feild
+to store the username, hashed password and the salt value.
+
+so it is optional to define thoes field in schema.
+so we have just added email in schema 
+and remaining will automatically through passport-local-mongoose
+
+add plugin after in userSchema in user.js
+
+userSchema.plugin(passportLocalMongoose);
+
+export schema.
+
+* passport-local-mongoose also add some function to our schema
+
+methods like ->
+
+setPassword(password, callback)
+changePassword(oldPassword, newPassword, callback)
+authenticate(password, callback)
+and many more.
+
+------------------------------------------------------------------------
+
+Configuring strategy => Configuring passport-local
+
+require 'passport' and 'passport-local' in app.js
+
+after session and flash middleware ->
+
+1. create 'passport.initialize()' middleware
+
+2. create passport.session() middleware ->
+because web app needs the ability to identify users as they browse from page to page
+the series of request and responce, each associated with the same user is a session
+
+3. passport.use(new LocalStrategy(User.authenticate()));
+all users on web app will authenticate through LocalStrategy
+to authenticate it uses authenticate method with User schema
+
+4 add two method for static serialize and deserialize of model for passport support
+- passport.serializeUser(User.serializeUser());
+- passport.deserializeUser(User.deserializeUser());
+
+serialize - serialize user into the session
+store user info in session
+
+deserialize - deserialize user from the session
+remove user info from session
+
+--------------------------------------------------------------------------
+
+creating a user - >
+
+create a route for it.
+create a user
+register user
+
+ex.
+app.get("/demouser", async (req, res) => {
+  let fakeUser = new User({
+    email: "sigmastudent@gmail.com",
+    username: "sigma-student",
+  });
+  let registeredUser = await User.register(fakeUser, "helloSigma");
+  res.send(registeredUser);
+});
+
+
+register method ->
+register(user, password, callback) ->
+register new user instance with given user password. 
+checks username is unique
+
+-------------------------------------------------------------
+
+Signup User =>
+
+GET "/signup" -> open Signup form
+
+POST "/signup" -> register user
+
+create a new routes 'user.js' in routes folder
+create signup form in users folder in views
+
+--------------------------------------------------------------
+
+LogIn User ->
+email: 'acsigma@gmail.com',
+username: 'apnacollege-sigma',
+password: 'hellosigma'
+
+GET "/login" -> open LogIn form
+
+POST "/login" -> check user exist or not
+this validation of user is done by passport middleware
+
+so we'll add passport.authenticate() middleware in post request
+pass strategy in middleware
+
+it has a failureRedirect, failureFlash
+
+failureRedirect -> if Authentication fails then user redirect to this route
+
+failureFlash -> flash message for failure
+
+if middleware authenticate successfull then it will go for async function
+
+ex. 
+router.post(
+  "/login", passport.authenticate("local", {
+      failureRedirect: "/login",
+      failureFlash: true,
+  }),
+  async (req, res) => {
+      res.send("welcome to wanderlust! you are loged in!");
+});
+
+=========================================================================================
+
+Connecting LogIn Route =>
+
+so only logged in user can make changes on website.
+
+How to check if user is logged in ?
+passport has inbuilt function for this
+
+'isAuthenticated()' in req object in passport
+
+it check user's info present in session is looged in or not.
+
+we'll check before crud operation is user logged in
+
+ex. before creating listing we'll check is user logged in
+
+------------------------------------------------------------------
+
+in listing.js inside "/listing" route
+add logic to check req.isAuthenticated() before rendering new.ejs.
+
+for any crud operation we have to check isAuthenticated()
+
+instead we'll make it as a middleware for all request
+
+-------------------------------------------------------------------
+
+we'll create a seperate file for all middlewares
+
+create middleware.js -> define middleware 'isLoggedIn' and export
+
+require it in app.js
+
+add this middleware in all requests
+
+---------------------------------------------------------------------
+
+Logout User =>
+
+GET "/logout"
+
+passport has builtin function for this.
+
+there exist 'req.logout()' for logout
+
+in 'user.js' -> create a route for logout
+add req.logout in it
+
+---------------------------------------------------------------
+
+Styling ->
+
+signup login Logout
+
+if user is loggedin -> only logout is visible
+if not -> only signup login visible
+
+for that we know
+
+passport bydefault save user info in req object
+if user is not logged in then it is undefined
+if user is logged in then there exist user info in object
+
+so if it is undefined then signup login visible 
+if not then logout is visible
+
+but we can not directly access req.user
+so we;ll save req.user in res.locals which is accessible.
+in through a middleware(created for res.locals) in app.js
+
+------------------------------------------------------------------------
+
+when we sign up on web site
+it does not make it logged in
+i.e. login is required after signup too.
+
+to make it automatic
+passport has a built in method 'req.login()' to do this.
+
+in "/signup" in user.js
+add this method .
+
+-------------------------------------------------------------------
+
+if we signup/login then it only redirect to "/listing"
+because if user is not logged in and hit crud operation routes
+there is a middleware to login
+and after login it redirect to "/listings"
+
+to prevent this
+
+req object has so much information saved
+req.originalUrl has previous hitted url before middleware to login
+
+so in "isLoggedIn" middleware 
+we'll save req.originalUrl value in req.session.redirectUrl
+
+but when we login passport reset req object 
+and we can not get req.session.redirectUrl
+
+to prevent this
+we'll create a new middleware "saveRedirectUrl"
+and save req.session.redirectUrl to res.locals.redirect
+call this middleware in "/login"(user.js) before passport.authenticate.
+and at last in "/login"
+create a variable redirectUrl
+let redirectUrl = res.locals.redirectUrl || "/listings";
+and redirect to 'redirectUrl'
+
+------------------------------------------------------------------
+
+Listing a Owner =>
+
+
+we'll add a owner property to listingSchema
+and in index.js in initDB
+add map function over initData.data to add a user id to all listings
+
+--------------------------------------------------------------------
+
+Autherization => which user has which permissions
+
+limiting who can make changes to listing.
+
+for this
+
+we can comapare 
+listing.owner._id and res.locals.user
+if both are same then user can make changes to listing.
+else hide edit and delete buttons.
+
+while edit delete and update implement same logic.
+
+instead lets create a new middleware 'isOwner' for it in middleware.js
+
+same apply for reviews
+
+--------------------------------------------------------------------
